@@ -1,0 +1,58 @@
+version: "3.7"
+
+networks: 
+    main-network:
+
+services:
+
+    tech-app:
+        image: node:14
+        container_name: tech-app
+        restart: always
+        volumes: 
+            - ./techguild-task-backend:/home/node/app
+        working_dir: /home/node/app
+        networks:
+            - main-network
+        ports: 
+            - 4000:4000
+        command: "npm start"
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"
+                max-size: "10m"
+
+    tech-db:
+        image: postgres:latest
+        container_name: tech-db
+        restart: always
+        environment:
+            - POSTGRES_USER=user
+            - POSTGRES_PASSWORD=ajkndash
+            - POSTGRES_DB=tech
+        ports: 
+            - 5432:5432  
+        networks:
+            - main-network
+        volumes:
+            - ./db:/var/lib/postgresql/data
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"
+                max-size: "10m"
+
+    tech-adminer:
+        image: adminer
+        container_name: tech-adminer
+        restart: always
+        ports:
+            - 8080:8080
+        networks:
+            - main-network         
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"
+                max-size: "10m"                        
